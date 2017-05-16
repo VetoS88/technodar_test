@@ -1,0 +1,17 @@
+CREATE TABLE students(
+stId SERIAL PRIMARY KEY,
+firstName VARCHAR(64),
+secondName VARCHAR(64),
+middleName VARCHAR(64));
+
+CREATE TABLE subjects(
+sbId SERIAL PRIMARY KEY,
+title VARCHAR(64));
+
+CREATE TABLE assessments(
+assId SERIAL PRIMARY KEY,
+valuation VARCHAR(64),
+stId INTEGER REFERENCES students NOT NULL,
+sbId INTEGER REFERENCES subjects NOT NULL,
+UNIQUE (stId, sbId)
+);
