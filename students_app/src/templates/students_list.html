@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+    {% for student in students %}
+    <div>
+        №: <a href="{{url_for('student', student_id=student.stid)}}" >{{ student.stid }}</a>
+        ФИО: <a href="{{url_for('student', student_id=student.stid)}}" >{{student.secondname}} {{student.firstname}} {{student.middlename}}</a>
+    </div>
+    {% endfor %}
+{% endblock %}

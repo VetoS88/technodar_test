@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <h2>Студент: {{student_full_name}} (№: {{student_id}})</h2>
+    {% for row in student_data %}
+        <div><p>{{row.subject}} {{row.valuation}}</p></div>
+    {% endfor %}
+
+{% endblock %}
