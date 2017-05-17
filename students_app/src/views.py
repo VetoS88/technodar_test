@@ -1,5 +1,7 @@
 from src import app, get_db
-from flask import render_template, flash
+from flask import render_template, flash, request
+from src.config import STUDENTS_PER_PAGE
+from src.utils import add_search_filters
 
 
 @app.route('/')
@@ -18,23 +20,28 @@ def index():
 
 
 @app.route('/students', methods=['GET'])
-def students():
+@app.route('/students/<int:page>', methods=['GET'])
+def students(page=0):
     db = get_db()
     cur = db.cursor()
     expected_fields = ('stid', 'secondname', 'firstname', 'middlename')
-    cur.execute('SELECT {}, {}, {}, {} FROM students'.format(*expected_fields))
-    cur.scroll(5)
-    raw_students_list = cur.fetchmany(size=50)
+    query_string = 'SELECT {}, {}, {}, {} FROM students'.format(*expected_fields)
+    search_param = request.args.get('search_param', '')
+    if search_param:
+        query_string = add_search_filters(query_string, search_param)
+    cur.execute(query_string)
+    students_count = cur.rowcount
+    cur.scroll(page*STUDENTS_PER_PAGE)
+    raw_students_list = cur.fetchmany(size=STUDENTS_PER_PAGE)
     students_list = []
     for row in raw_students_list:
         named_fields = {}
         for i, val in enumerate(row):
             named_fields[expected_fields[i]] = val
         students_list.append(named_fields)
-
-    flash('Тут должен быть список студентов.')
     return render_template("students_list.html",
                            title='Список студентов',
+                           students_count=students_count,
                            students=students_list)
 
 

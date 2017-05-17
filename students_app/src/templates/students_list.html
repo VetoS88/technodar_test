@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
+    <h2>Список студентов({{students_count}})</h2>
+    <form action="{{url_for('students')}}">
+			<input id="search_field" type="text" name="search_param" value="{{ search_param }}"/>
+			<button type="submit">Искать</button>
+    </form>
+<hr>
     {% for student in students %}
     <div>
         №: <a href="{{url_for('student', student_id=student.stid)}}" >{{ student.stid }}</a>
