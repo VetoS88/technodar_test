@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Новый студент</h2>
+    <form action="{{url_for('add_student')}}" method="POST">
+            <p><label for="secondname">Фамилия</label>
+                <input id="secondname" name="secondname" class="field name" type="text" required pattern="^[А-Яа-яЁёa-zA-Z]+$" value="{{secondname}}"><br>
+            <label for="firstname">Имя</label>
+                <input id="firstname" name="firstname" class="field surname" type="text" required pattern="^[А-Яа-яЁёa-zA-Z]+$" value="{{firstname}}"><br>
+            <label for="middlename">Отчество</label>
+                <input id="middlename" name="middlename" class="field city" type="text" required pattern="^[А-Яа-яЁёa-zA-Z]+$" value="{{middlename}}"></p>
+			<button type="submit">Добавить</button>
+    </form>
+    <h4>Все поля обязтельны для заполнения</h4>
+{% endblock %}
+
+

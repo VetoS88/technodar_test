@@ -9,7 +9,10 @@
     {% endif %}
 </head>
 <body>
-    <div>Список: <a href="/students">Студенты</a></div>
+    <div><a href="{{url_for('index')}}">Главная</a>
+         <a href="{{url_for('students')}}">Студенты</a>
+         <a href="{{url_for('add_student')}}">Добавить студента</a>
+    </div>
     <hr>
     {% with messages = get_flashed_messages() %}
     {% if messages %}

@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Студент</h2>
+    {{secondname}} {{firstname}} {{middlename}}
+    <h2>Успешно добавлен</h2>
+    <a href="{{url_for('add_student')}}">Еще один</a>
+    <a href="{{url_for('students')}}">Все студенты</a>
+{% endblock %}

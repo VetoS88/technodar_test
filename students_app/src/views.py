@@ -1,3 +1,5 @@
+import psycopg2
+
 from src import app, get_db
 from flask import render_template, flash, request
 from src.config import STUDENTS_PER_PAGE
@@ -29,10 +31,14 @@ def students(page=0):
     search_param = request.args.get('search_param', '')
     if search_param:
         query_string = add_search_filters(query_string, search_param)
+    query_string += ' ORDER BY stid DESC'
     cur.execute(query_string)
     students_count = cur.rowcount
-    cur.scroll(page*STUDENTS_PER_PAGE)
-    raw_students_list = cur.fetchmany(size=STUDENTS_PER_PAGE)
+    try:
+        cur.scroll(page * STUDENTS_PER_PAGE)
+        raw_students_list = cur.fetchmany(size=STUDENTS_PER_PAGE)
+    except psycopg2.ProgrammingError:
+        raw_students_list = cur.fetchall()
     students_list = []
     for row in raw_students_list:
         named_fields = {}
@@ -65,3 +71,31 @@ def student(student_id):
                            student_data=student_data,
                            student_id=student_id,
                            student_full_name=student_full_name)
+
+
+@app.route('/add_student', methods=['GET', 'POST'])
+def add_student():
+    if request.method == 'GET':
+        return render_template("new_student.html",
+                               title='Добавление студента')
+    elif request.method == 'POST':
+        secondname = request.values.get('secondname', '')
+        firstname = request.values.get('firstname', '')
+        middlename = request.values.get('middlename', '')
+        if not (secondname and firstname and middlename):
+            flash('Проверте пожалуйста корректность введенных данных.')
+            return render_template("new_student.html",
+                                   secondname=secondname,
+                                   firstname=firstname,
+                                   middlename=middlename,
+                                   title='Добавление студента')
+        db = get_db()
+        cur = db.cursor()
+        query = 'INSERT INTO students (secondname, firstname, middlename) VALUES (%s, %s, %s)'
+        cur.execute(query, (secondname, firstname, middlename))
+        db.commit()
+        return render_template("student_add_success.html",
+                               secondname=secondname,
+                               firstname=firstname,
+                               middlename=middlename,
+                               title='Добавление студента')
