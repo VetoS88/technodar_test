@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Редактирование данных студента</h2>
+    <form action="{{url_for('student_edit', student_id=student_id)}}" method="POST">
+            {% for name_field in student_full_name %}
+                <br><label for="st_{{name_field}}">{{name_field | translate_labels}}</label><br>
+                <input id="st_{{name_field}}" name="st_{{name_field}}" class="field name" type="text" required pattern="^[А-Яа-яЁёa-zA-Z]+$" value="{{student_full_name[name_field]}}"><br>
+                <input id="old_st_{{name_field}}" name="old_st_{{name_field}}" class="field name" type="text" required pattern="^[А-Яа-яЁёa-zA-Z]+$" value="{{student_full_name[name_field]}}" hidden="true">
+            {% endfor %}
+            <hr>
+            {% for subject in student_data %}
+                <label for="sb_{{subject[0]}}">{{subject[1]}}</label>
+                <input id="sb_{{subject[0]}}" name="sb_{{subject[0]}}" class="field name" type="text" required pattern="^[ А-Яа-яЁёa-zA-Z0-9]+$" value="{{student_data[subject]}}"><br>
+                <input id="old_sb_{{subject[0]}}" name="old_sb_{{subject[0]}}" class="field name" type="text" required pattern="^[ А-Яа-яЁёa-zA-Z0-9]+$" value="{{student_data[subject]}}" hidden="true">
+            {% endfor %}
+			<p><button type="submit">Обновить данные</button></p>
+    </form>
+    <form action="{{url_for('student', student_id=student_id)}}" method="GET">
+			<button type="submit">Вернуться к просмотру карточки</button>
+    </form>
+    <h4>Все поля обязтельны для заполнения</h4>
+{% endblock %}

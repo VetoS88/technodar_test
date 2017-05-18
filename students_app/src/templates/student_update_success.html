@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Студент</h2>
+    {{secondname}} {{firstname}} {{middlename}}
+    <h2>Успешно обновлен</h2>
+    <a href="{{url_for('student', student_id=student_id)}}" >Просмотр карточки</a>
+    <a href="{{url_for('student_edit', student_id=student_id)}}">Еще редактировать</a>
+{% endblock %}

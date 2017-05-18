@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
 
-    <h2>Студент: {{student_full_name}} (№: {{student_id}})</h2>
+    <h2>Студент: {{student_full_name.secondname}}
+        {{student_full_name.firstname}}
+        {{student_full_name.middlename}} (№: {{student_id}})</h2>
+    <a href="{{url_for('student_edit', student_id=student_id)}}">Редактировать</a>
     {% for row in student_data %}
-        <div><p>{{row.subject}} {{row.valuation}}</p></div>
+        <div><p>{{row[1]}}: {{student_data[row]}}</p></div>
     {% endfor %}
 
 {% endblock %}
