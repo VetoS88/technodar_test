@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Удаление студента</h2>
+    {{secondname}} {{firstname}} {{middlename}}
+    <h2>Вы уверены, что хотите удалить все данные студента?</h2>
+
+    <form action="{{url_for('student', student_id=student_id)}}" method="GET">
+			<button type="submit">Нет, назад к карточке студента</button>
+    </form>
+<br>
+    <form action="{{url_for('student_delete', student_id=student_id)}}" method="POST">
+			<button type="submit">Да, Удалть!</button>
+    </form>
+{% endblock %}

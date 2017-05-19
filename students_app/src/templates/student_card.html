@@ -5,6 +5,7 @@
         {{student_full_name.firstname}}
         {{student_full_name.middlename}} (№: {{student_id}})</h2>
     <a href="{{url_for('student_edit', student_id=student_id)}}">Редактировать</a>
+    <a href="{{url_for('student_delete', student_id=student_id)}}">Удалить</a>
     {% for row in student_data %}
         <div><p>{{row[1]}}: {{student_data[row]}}</p></div>
     {% endfor %}

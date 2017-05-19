@@ -90,6 +90,9 @@ def student_edit(student_id):
         return student(student_id, edit=1)
     elif request.method == 'POST':
         all_data = request.values
+        secondname = all_data.get('st_secondname', all_data.get('st_old_secondname', ''))
+        firstname = all_data.get('st_firstname', all_data.get('st_old_firstname', ''))
+        middlename = all_data.get('st_middlename', all_data.get('st_old_middlename', ''))
         students_data = {field: all_data[field] for field in all_data if 'st_' in field}
         subjects_data = {field: all_data[field] for field in all_data if 'sb_' in field}
         changed_students_data = filter_changed_data(students_data)
@@ -118,7 +121,10 @@ def student_edit(student_id):
             cur.execute(query)
             db.commit()
         return render_template('student_update_success.html',
-                               title='Карточка студента',
+                               title='Успешное обновление данных',
+                               secondname=secondname,
+                               firstname=firstname,
+                               middlename=middlename,
                                student_id=student_id)
 
 
@@ -147,4 +153,40 @@ def add_student():
                                secondname=secondname,
                                firstname=firstname,
                                middlename=middlename,
-                               title='Добавление студента')
+                               title='Успешное добавление студента')
+
+
+@app.route('/student/delete/<int:student_id>', methods=['GET', 'POST'])
+def student_delete(student_id):
+    if request.method == 'GET':
+        db = get_db()
+        cur = db.cursor()
+        expected_fields = ('stid', 'secondname', 'firstname', 'middlename')
+        query_string = 'SELECT {}, {}, {}, {} FROM students WHERE stid=%s'.format(*expected_fields)
+        cur.execute(query_string, (student_id,))
+        student_entry = cur.fetchall()
+        secondname = student_entry[0][1]
+        firstname = student_entry[0][2]
+        middlename = student_entry[0][3]
+        return render_template("student_delete_confirmation.html",
+                               secondname=secondname,
+                               firstname=firstname,
+                               middlename=middlename,
+                               student_id=student_id,
+                               title='Подтверждение удаления студента')
+    elif request.method == 'POST':
+        db = get_db()
+        cur = db.cursor()
+        query_string = 'DELETE FROM students WHERE stid=%s RETURNING *'
+        cur.execute(query_string, (student_id,))
+        student_entry = cur.fetchall()
+        secondname = student_entry[0][1]
+        firstname = student_entry[0][2]
+        middlename = student_entry[0][3]
+        db.commit()
+        return render_template("student_delete_success.html",
+                               secondname=secondname,
+                               firstname=firstname,
+                               middlename=middlename,
+                               student_id=student_id,
+                               title='Успешное удаление студента')
