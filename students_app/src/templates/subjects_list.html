@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Список предметов({{subjects_count}})</h2>
+    {% for subject in subjects_list %}
+    <div>
+        №: <a href="{{url_for('subject_edit', subject_id=subject[0])}}" >{{ subject[0] }}</a>
+        Название: <a href="{{url_for('subject_edit', subject_id=subject[0])}}" >{{ subject[1] }}</a>
+    </div>
+    {% endfor %}
+{% endblock %}

@@ -190,3 +190,57 @@ def student_delete(student_id):
                                middlename=middlename,
                                student_id=student_id,
                                title='Успешное удаление студента')
+
+
+@app.route('/subjects', methods=['GET'])
+def subjects():
+    db = get_db()
+    cur = db.cursor()
+    query_string = 'SELECT * FROM subjects ORDER BY sbid ASC'
+    cur.execute(query_string)
+    subjects_count = cur.rowcount
+    subjects_list = cur.fetchall()
+    return render_template("subjects_list.html",
+                           title='Список предметов',
+                           subjects_count=subjects_count,
+                           subjects_list=subjects_list)
+
+
+@app.route('/add_subject', methods=['GET', 'POST'])
+def add_subject():
+    pass
+
+
+@app.route('/subject/edit/<int:subject_id>', methods=['GET', 'POST'])
+def subject_edit(subject_id):
+    if request.method == 'GET':
+        db = get_db()
+        cur = db.cursor()
+        query_string = 'SELECT * FROM subjects WHERE sbid=%s'
+        cur.execute(query_string, (subject_id,))
+        subject_entry = cur.fetchall()
+        return render_template('update_subject.html',
+                               title='Редактирование предмета',
+                               subject=subject_entry[0],
+                               subject_id=subject_id)
+    elif request.method == 'POST':
+        db = get_db()
+        cur = db.cursor()
+        new_title = request.values.get('title', request.values.get('old_title', ''))
+        old_title = request.values.get('old_title', '')
+        if new_title != old_title:
+            query_string = 'UPDATE subjects SET title=%s WHERE sbid=%s RETURNING *'
+            cur.execute(query_string, (new_title, subject_id))
+            subject_entry = cur.fetchall()[0]
+            db.commit()
+        else:
+            subject_entry = (subject_id, old_title)
+        return render_template('update_subject.html',
+                               title='Редактирование предмета',
+                               subject=subject_entry,
+                               subject_id=subject_id)
+
+
+@app.route('/subject/delete/<int:subject_id>', methods=['GET', 'POST'])
+def subject_delete(subject_id):
+    pass

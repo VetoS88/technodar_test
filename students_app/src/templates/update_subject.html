@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Редактирование информации о предмете</h2>
+    <form action="{{url_for('subject_edit', subject_id=subject_id)}}" method="POST">
+        <br><label for="title">Название</label><br>
+        <input id="title" name="title" class="field name" type="text" required pattern="^[А-Яа-яЁёa-zA-Z0-9]+$" value="{{subject[1]}}"><br>
+        <input id="old_title" name="old_title" class="field name" type="text" required pattern="^[А-Яа-яЁёa-zA-Z0-9]+$" value="{{subject[1]}}" hidden="true">
+        <br>
+        <p><button type="submit">Обновить данные</button></p>
+    </form>
+    <form action="{{url_for('subjects')}}" method="GET">
+			<button type="submit">Вернуться к списку предметов</button>
+    </form>
+    <h4>Все поля обязтельны для заполнения</h4>
+{% endblock %}
