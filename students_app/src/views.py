@@ -97,9 +97,26 @@ def student_edit(student_id):
         if changed_students_data:
             db = get_db()
             cur = db.cursor()
-            query = 'UPDATE students ' \
-                    'SET (secondname, firstname, middlename) VALUES (%s, %s, %s)'
-            pass
+            values_for_update = []
+            for key in changed_students_data:
+                value = changed_students_data[key]
+                key = key.replace('st_', '')
+                values_for_update.append("{}='{}'".format(key, value))
+            values_for_update = ','.join(values_for_update)
+            query = "UPDATE students SET {} WHERE stid=%s".format(values_for_update)
+            cur.execute(query, (student_id,))
+            db.commit()
+        if changed_subjects_data:
+            db = get_db()
+            cur = db.cursor()
+            query_template = "INSERT INTO assessments (stid, sbid, valuation)" \
+                             " VALUES {} ON CONFLICT (stId, sbId) " \
+                             "DO UPDATE SET valuation=EXCLUDED.valuation"
+            update_subjects = [str((student_id, int(subject.replace('sb_', '')), changed_subjects_data[subject]))
+                               for subject in changed_subjects_data]
+            query = query_template.format(','.join(update_subjects))
+            cur.execute(query)
+            db.commit()
         return render_template('student_update_success.html',
                                title='Карточка студента',
                                student_id=student_id)
