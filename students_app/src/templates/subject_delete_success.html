@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Предмет</h2>
+    {{subject_entry[1]}}
+    <h2>Успешно удален</h2>
+    <a href="{{url_for('subjects')}}">Список предметов</a>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Добавление нового предмета</h2>
+    <form action="{{url_for('add_subject')}}" method="POST">
+        <br><label for="title">Название</label><br>
+        <input id="title" name="title" class="field name" type="text" required pattern="^[ А-Яа-яЁёa-zA-Z0-9]+$" value="{{ subject_title }}"><br>
+        <br>
+        <p><button type="submit">Добавить предмет</button></p>
+    </form>
+    <form action="{{url_for('subjects')}}" method="GET">
+			<button type="submit">Вернуться к списку предметов</button>
+    </form>
+    <h4>Все поля обязтельны для заполнения</h4>
+{% endblock %}

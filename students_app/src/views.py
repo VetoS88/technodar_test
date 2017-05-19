@@ -208,7 +208,28 @@ def subjects():
 
 @app.route('/add_subject', methods=['GET', 'POST'])
 def add_subject():
-    pass
+    if request.method == 'GET':
+        return render_template("add_subject.html",
+                               title='Добавить новый предмет', )
+    elif request.method == 'POST':
+        new_subject_title = request.values.get('title', '')
+        if new_subject_title:
+            db = get_db()
+            cur = db.cursor()
+            query_string = 'INSERT INTO subjects (title) VALUES (%s) RETURNING *'
+            cur.execute(query_string, (new_subject_title,))
+            subject_entry = cur.fetchall()[0]
+            subject_id = subject_entry[0]
+            db.commit()
+            return render_template('update_subject.html',
+                                   title='Редактирование предмета',
+                                   subject=subject_entry,
+                                   subject_id=subject_id)
+        else:
+            flash('Проверте пожалуйста корректность введенных данных.')
+            return render_template("add_subject.html",
+                                   title='Добавить новый предмет',
+                                   subject_title=new_subject_title)
 
 
 @app.route('/subject/edit/<int:subject_id>', methods=['GET', 'POST'])
@@ -224,15 +245,16 @@ def subject_edit(subject_id):
                                subject=subject_entry[0],
                                subject_id=subject_id)
     elif request.method == 'POST':
-        db = get_db()
-        cur = db.cursor()
         new_title = request.values.get('title', request.values.get('old_title', ''))
         old_title = request.values.get('old_title', '')
         if new_title != old_title:
+            db = get_db()
+            cur = db.cursor()
             query_string = 'UPDATE subjects SET title=%s WHERE sbid=%s RETURNING *'
             cur.execute(query_string, (new_title, subject_id))
             subject_entry = cur.fetchall()[0]
             db.commit()
+            flash('Данные о предмете обновлены.')
         else:
             subject_entry = (subject_id, old_title)
         return render_template('update_subject.html',
@@ -243,4 +265,23 @@ def subject_edit(subject_id):
 
 @app.route('/subject/delete/<int:subject_id>', methods=['GET', 'POST'])
 def subject_delete(subject_id):
-    pass
+    if request.method == 'GET':
+        db = get_db()
+        cur = db.cursor()
+        query_string = 'SELECT * FROM subjects WHERE sbid=%s'
+        cur.execute(query_string, (subject_id,))
+        subject_entry = cur.fetchall()
+        return render_template('subject_delete_confirmation.html',
+                               title='Удаление предмета',
+                               subject=subject_entry[0],
+                               subject_id=subject_id)
+    elif request.method == 'POST':
+        db = get_db()
+        cur = db.cursor()
+        query_string = 'DELETE FROM subjects WHERE sbid=%s RETURNING *'
+        cur.execute(query_string, (subject_id,))
+        subject_entry = cur.fetchall()[0]
+        db.commit()
+        return render_template("subject_delete_success.html",
+                               subject_entry=subject_entry,
+                               title='Успешное удаление предмета')

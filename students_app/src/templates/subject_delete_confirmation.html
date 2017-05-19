@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Удаление передмета</h2>
+    {{ subject[1] }}
+    <h2>Вы уверены, что хотите удалить предмет</h2>
+
+    <form action="{{url_for('subjects')}}" method="GET">
+			<button type="submit">Нет, назад к списку предметов</button>
+    </form>
+<br>
+    <form action="{{url_for('subject_delete', subject_id=subject_id)}}" method="POST">
+			<button type="submit">Да, Удалить!</button>
+    </form>
+{% endblock %}
