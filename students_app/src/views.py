@@ -1,14 +1,23 @@
+"""
+    Основная логика приложения 
+    набор функциий выполняющих операции 
+    по добавлению просмотру редактированию и удалению данных о студентах и предметах
+"""
+
 import psycopg2
 
 from src import app, get_db
 from flask import render_template, flash, request
-from src.config import STUDENTS_PER_PAGE
-from src.utils import add_search_filters, filter_changed_data
+from .configure import STUDENTS_PER_PAGE
+from .utils import add_search_filters, filter_changed_data
 
 
 @app.route('/')
 @app.route('/index')
 def index():
+    """
+        Рендерит шаблон главной страницы
+    """
     greetings = "Добро пожаловать в систему учета успеваемости студентов."
     authors = [
         {'name': 'Виталий',
@@ -24,6 +33,11 @@ def index():
 @app.route('/students', methods=['GET'])
 @app.route('/students/<int:page>', methods=['GET'])
 def students(page=0):
+    """
+        Выводит список пользователей.
+        Есть функция пагинации( вывод осуществляется по 50 студентов)
+        Выполняет функции поиска студентов
+    """
     db = get_db()
     cur = db.cursor()
     expected_fields = ('stid', 'secondname', 'firstname', 'middlename')
@@ -53,6 +67,9 @@ def students(page=0):
 
 @app.route('/student/<int:student_id>', methods=['GET'])
 def student(student_id, edit=0):
+    """
+        Показывает данные о студенте и оценки по предметам(карточку студента). 
+    """
     db = get_db()
     cur = db.cursor()
     flash('Был передан id={} студента.'.format(student_id))
@@ -86,6 +103,10 @@ def student(student_id, edit=0):
 
 @app.route('/student/edit/<int:student_id>', methods=['GET', 'POST'])
 def student_edit(student_id):
+    """
+        Выполняет редактирование пользователя.
+        Изменяет только те данные, которые были изменены в форме.
+    """
     if request.method == 'GET':
         return student(student_id, edit=1)
     elif request.method == 'POST':
@@ -130,6 +151,9 @@ def student_edit(student_id):
 
 @app.route('/add_student', methods=['GET', 'POST'])
 def add_student():
+    """
+        Добавление студента. 
+    """
     if request.method == 'GET':
         return render_template("new_student.html",
                                title='Добавление студента')
@@ -158,6 +182,9 @@ def add_student():
 
 @app.route('/student/delete/<int:student_id>', methods=['GET', 'POST'])
 def student_delete(student_id):
+    """
+        Удаление студента с подтверждением.
+    """
     if request.method == 'GET':
         db = get_db()
         cur = db.cursor()
@@ -194,6 +221,9 @@ def student_delete(student_id):
 
 @app.route('/subjects', methods=['GET'])
 def subjects():
+    """
+        Список предметов.
+    """
     db = get_db()
     cur = db.cursor()
     query_string = 'SELECT * FROM subjects ORDER BY sbid ASC'
@@ -208,6 +238,9 @@ def subjects():
 
 @app.route('/add_subject', methods=['GET', 'POST'])
 def add_subject():
+    """
+        Добавление предмета.
+    """
     if request.method == 'GET':
         return render_template("add_subject.html",
                                title='Добавить новый предмет', )
@@ -234,6 +267,9 @@ def add_subject():
 
 @app.route('/subject/edit/<int:subject_id>', methods=['GET', 'POST'])
 def subject_edit(subject_id):
+    """
+        Редактирование названия предмета.
+    """
     if request.method == 'GET':
         db = get_db()
         cur = db.cursor()
@@ -265,6 +301,9 @@ def subject_edit(subject_id):
 
 @app.route('/subject/delete/<int:subject_id>', methods=['GET', 'POST'])
 def subject_delete(subject_id):
+    """
+        Удаление предмета с подтверждением.
+    """
     if request.method == 'GET':
         db = get_db()
         cur = db.cursor()

@@ -1,17 +1,6 @@
-CREATE TABLE students(
-stId SERIAL PRIMARY KEY,
-firstName VARCHAR(64),
-secondName VARCHAR(64),
-middleName VARCHAR(64));
-
-CREATE TABLE subjects(
-sbId SERIAL PRIMARY KEY,
-title VARCHAR(64));
-
-CREATE TABLE assessments(
-assId SERIAL PRIMARY KEY,
-valuation VARCHAR(64),
-stId INTEGER REFERENCES students NOT NULL ON DELETE CASCADE,
-sbId INTEGER REFERENCES subjects NOT NULL ON DELETE CASCADE,
-UNIQUE (stId, sbId)
-);
+-- Создаем базу данных для приложения.
+CREATE DATABASE students;
+-- Создаем пользователя для приложения.
+CREATE ROLE professor WITH LOGIN PASSWORD 'professor';
+-- Даем полномочия на базу данных пользователю.
+GRANT ALL PRIVILEGES ON DATABASE students TO professor;

@@ -1,9 +1,16 @@
-from jinja2 import evalcontextfilter
-
-from src import app
+"""
+    Различные вспомогательные функции.
+"""
+from . import app
 
 
 def add_search_filters(query_string, search_param):
+    """
+    Функция для составления запроса поиска пои имени фамилии и отчеству
+    :param query_string: базовый запрос(без фильтров поиска)
+    :param search_param: строка с данными по которым нужно осуществить поиск
+    :return: query_string: строка с фильтрами поиска.
+    """
     search_param = search_param.split()
     query_string = query_string + " " + "WHERE (secondname ILIKE '%{str}%' OR " \
                                         "firstname ILIKE '%{str}%' OR " \
@@ -21,6 +28,10 @@ def add_search_filters(query_string, search_param):
 
 @app.template_filter('translate_labels')
 def translate_labels(eng_word):
+    """
+    Фильтр для отображения меток на русском языке.
+    
+    """
     dictionary = {
         'secondname': 'Фамилия',
         'firstname': 'Имя',
@@ -30,6 +41,11 @@ def translate_labels(eng_word):
 
 
 def filter_changed_data(data):
+    """
+    Функция для определения изменившихся данных
+    :param data: старые и новые данные
+    :return: changed_data: словарь только тольок тех данных, которые были изменены
+    """
     changed_data = {}
     for field in data:
         if 'old_' not in field:
