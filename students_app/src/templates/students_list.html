@@ -2,7 +2,11 @@
 {% block content %}
     <h2>Список студентов({{students_count}})</h2>
     <form action="{{url_for('students')}}">
+            <label for="search_field">Поиск</label>
 			<input id="search_field" type="text" name="search_param" value="{{ search_param }}"/>
+            <label for="page_field">Страница</label>
+			<input id="page_field" type="text" name="page" required pattern="^[0-9]+$" value="{{ page }}"/>
+            всего ({{page_count}})
 			<button type="submit">Искать</button>
     </form>
 <hr>

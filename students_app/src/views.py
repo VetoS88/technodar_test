@@ -31,8 +31,7 @@ def index():
 
 
 @app.route('/students', methods=['GET'])
-@app.route('/students/<int:page>', methods=['GET'])
-def students(page=0):
+def students():
     """
         Выводит список пользователей.
         Есть функция пагинации( вывод осуществляется по 50 студентов)
@@ -43,13 +42,16 @@ def students(page=0):
     expected_fields = ('stid', 'secondname', 'firstname', 'middlename')
     query_string = 'SELECT {}, {}, {}, {} FROM students'.format(*expected_fields)
     search_param = request.args.get('search_param', '')
+    page = request.args.get('page', 1) or 1
+    page = int(page)
     if search_param:
         query_string = add_search_filters(query_string, search_param)
     query_string += ' ORDER BY stid DESC'
     cur.execute(query_string)
     students_count = cur.rowcount
+    page_count = students_count//STUDENTS_PER_PAGE + 1
     try:
-        cur.scroll(page * STUDENTS_PER_PAGE)
+        cur.scroll((page-1) * STUDENTS_PER_PAGE)
         raw_students_list = cur.fetchmany(size=STUDENTS_PER_PAGE)
     except psycopg2.ProgrammingError:
         raw_students_list = cur.fetchall()
@@ -61,6 +63,9 @@ def students(page=0):
         students_list.append(named_fields)
     return render_template("students_list.html",
                            title='Список студентов',
+                           search_param=search_param,
+                           page=page,
+                           page_count=page_count,
                            students_count=students_count,
                            students=students_list)
 

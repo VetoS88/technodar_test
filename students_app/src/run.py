@@ -1,5 +1,5 @@
 """
-Запуск вебсервера Flask из виртуального окружения.
+    Запуск вебсервера Flask.
 """
 
 import os
@@ -10,5 +10,5 @@ sys.path.append(os.getcwd())
 from src import app
 
 if __name__ == "__main__":
-    # app.run(debug=True)
-    app.run()
+    app.run(debug=True)
+    # app.run()
