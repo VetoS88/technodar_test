@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    <h2>Список студентов({{students_count}})</h2>
+    <h2>Список студентов( Всего в списке: {{students_count}})</h2>
     <form action="{{url_for('students')}}">
             <label for="search_field">Поиск</label>
 			<input id="search_field" type="text" name="search_param" value="{{ search_param }}"/>
